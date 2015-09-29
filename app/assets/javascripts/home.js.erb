@@ -1,63 +1,61 @@
 var Tracking = {
-	mapDivId: "#map_canvas",
-	nearById: "#near_by",
+  mapDivId: "#map_canvas",
+  nearById: "#near_by",
   markers: [],
   trucks: {},
-	
-	init: function() {
+  
+  init: function() {
     this.map_intialise();
     return this;
   },
 
-	map_intialise: function() { 
-		var latlng = new google.maps.LatLng(37.756614, -122.457169);
-	  var myOptions = {
-	    zoom: 13,
-	    center: latlng,	
-	    disableDefaultUI: true
-	  }
-	  var near_by = $(Tracking.nearById);
-	  var defaultBounds = new google.maps.LatLngBounds(latlng);
+  map_intialise: function() {
+    var latlng = new google.maps.LatLng(37.756614, -122.457169);
+    var myOptions = {
+      zoom: 13,
+      center: latlng,	
+      disableDefaultUI: true
+    }
+    var near_by = $(Tracking.nearById);
+    var defaultBounds = new google.maps.LatLngBounds(latlng);
+    
+    map = new google.maps.Map($(Tracking.mapDivId)[0], myOptions);
 
-	  map = new google.maps.Map($(Tracking.mapDivId)[0], myOptions);
+    marker = new google.maps.Marker({
+      position: { lat: 37.756614, lng: -122.457169},
+      map: map,
+      draggable: true
+    });
 
-	  marker = new google.maps.Marker({
-	    position: { lat: 37.756614, lng: -122.457169},
-	    map: map,
-	    draggable: true
-	  });
+    var options = {
+     bounds: defaultBounds
+    };
 
-		var options = {
-			bounds: defaultBounds
-		};
-		
-		var autocomplete_near_by = new google.maps.places.Autocomplete(near_by[0],options);
-		google.maps.event.addListener(autocomplete_near_by, 'place_changed', function() {
+    var autocomplete_near_by = new google.maps.places.Autocomplete(near_by[0],options);
+    google.maps.event.addListener(autocomplete_near_by, 'place_changed', function() {
       Tracking.autoCompleteUpdatedLandmark(autocomplete_near_by, near_by[0]);
     }); 
 
-	  google.maps.event.addListener(marker, 'dragend', function() {
-	    var source_lat_lng = marker.getPosition();
-	    Tracking.getDriverDetails(source_lat_lng.lat(), source_lat_lng.lng())
-	  });
-	},
+    google.maps.event.addListener(marker, 'dragend', function() {
+      var source_lat_lng = marker.getPosition();
+      Tracking.getDriverDetails(source_lat_lng.lat(), source_lat_lng.lng())
+    });
+  },
 
-	autoCompleteUpdatedLandmark: function(autocomplete, element) {
-	  var place = autocomplete.getPlace();
-	  var source_lat_lng = place.geometry.location;
-	 	marker.setPosition( new google.maps.LatLng( source_lat_lng.lat(),source_lat_lng.lng() ) );
-	 	Tracking.getDriverDetails(source_lat_lng.lat(), source_lat_lng.lng())
-	},
+  autoCompleteUpdatedLandmark: function(autocomplete, element) {
+    var place = autocomplete.getPlace();
+    var source_lat_lng = place.geometry.location;
+    marker.setPosition( new google.maps.LatLng( source_lat_lng.lat(),source_lat_lng.lng() ) );
+    Tracking.getDriverDetails(source_lat_lng.lat(), source_lat_lng.lng())
+  },
 
-	
-
-	setVehicleMarkers: function(trucks, dest_lat, dest_lng) {
-		Tracking.deleteMarkers();
+  setVehicleMarkers: function(trucks, dest_lat, dest_lng) {
+    Tracking.deleteMarkers();
     var image = "<%= asset_path('truck.png') %>";
 
     for (var i in trucks) {
       var truckLatLng = new google.maps.LatLng(trucks[i].latitude, trucks[i].longitude);
-  		// distance between first and second location is less than 5km
+      // distance between first and second location is less than 5km
       var marker;
 
       marker = new google.maps.Marker({
@@ -65,9 +63,9 @@ var Tracking = {
         map: map,
         icon: image,
       });
-      
+
       var htmlForMarker = "";
-      
+
       htmlForMarker = htmlForMarker + "<div style='width:160px;min-height:15px;'>";
       htmlForMarker = htmlForMarker + "Applicant : ";
       htmlForMarker = htmlForMarker + trucks[i]["applicant"] + "<br/>";
@@ -82,16 +80,16 @@ var Tracking = {
     }// for loop
   },
 
-  
+
   deleteMarkers: function() {
-  	for (var i in Tracking.markers) {
+    for (var i in Tracking.markers) {
       Tracking.markers[i].setMap(null);
     }
-    Tracking.markers = [];
+     Tracking.markers = [];
   },  
-  
-	
-	getDriverDetails: function(dest_lat, dest_lng) {
+
+
+  getDriverDetails: function(dest_lat, dest_lng) {
     var datatosend = {lat : dest_lat, lng : dest_lng};
     $.ajax({
       url: "/trackings/nearest_trucks",
@@ -104,12 +102,12 @@ var Tracking = {
       complete: function () {
         Tracking.setVehicleMarkers(Tracking.trucks);
       }
-  	});
-	},
+   });
+  },
 
 
-	attachInstructionText: function(marker, text) {
-		Tracking.markers.push(marker);
+  attachInstructionText: function(marker, text) {
+    Tracking.markers.push(marker);
     infowindow = new google.maps.InfoWindow({
       content: text,
       maxWidth: 300
@@ -119,10 +117,10 @@ var Tracking = {
       infowindow.setContent(text);
       infowindow.open(map, marker);
     });
-	}
+  }
 
-}	
+ }	
 
 $(document).ready(function(){
-	var truck_tracking = Tracking.init();  
+  var truck_tracking = Tracking.init();  
 });
