@@ -1,0 +1,15 @@
+#near_by {
+	width: 70%;
+	height: 30px;
+}
+
+.heading-title {
+	color: #fff;
+ 	font-size: 22px;
+ 	text-decoration: underline;
+ 	padding: 4px;
+}
+
+.header {
+	text-align: center;
+}

@@ -1,0 +1,61 @@
+require 'csv'    
+
+csv_text = File.read('Mobile_Food_Facility_Permit.csv')
+csv = CSV.parse(csv_text, :headers => true)
+
+
+csv.each do |row|
+	tr = Truck.new
+	tr.locationid = row["locatinoid"].to_i
+	tr.applicant = row["Applicant"]
+	
+	if row["Facility_Type"] == "Truck" ? 
+		faci = 0
+	elsif row["facility_type"] == "Push Cart"
+		faci = 1
+	else 
+		faci = nil
+	end
+	
+	tr.facility_type = faci
+	tr.cnn = row["cnn"].to_i
+	tr.location_description = row["LocaionDescription"]
+	tr.address = row["Address"]
+	tr.blocklot = row["blocklot"].to_i
+	tr.block = row["block"].to_i
+	tr.lot = row["lot"].to_i
+	tr.permit = row["permit"]
+
+
+	if row["Status"] == "APPROVED" ? 
+		sta = 0
+	elsif row["Status"] == "REQUESTED"
+		sta = 1
+	elsif row["Status"] == "SUSPEND"	
+		sta = 2
+	elsif row["Status"] == "EXPIRED"
+		sta = 3	
+	else 
+		sta = nil
+	end
+	
+	tr.status = sta
+	tr.food_items = row["FoodItems"]
+	tr.X = row["X"].to_f
+	tr.Y = row["Y"].to_f
+	tr.latitude = row["Latitude"].to_f
+	tr.longitude = row["Longitude"].to_f
+	tr.schedule = row["Schedule"]
+	tr.days_hours = row["dayshours"]
+	tr.noi_sent = row["NOISent"]
+	appr = row["Approved"].present? DateTime.parse(row["Approved"]) : nil
+	tr.approved =  appr
+	reci = row["Approved"].present? DateTime.parse(row["Recieved"]) : nil
+	tr.approved =  reci
+	tr.prior_permit = row["PriorPermit"]
+	exp = row["ExpirationDate"].present? DateTime.parse(row["Expiration"]) : nil
+	tr.expiration_time =  exp
+	tr.location = row["location"]
+
+end
+	

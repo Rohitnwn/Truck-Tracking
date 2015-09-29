@@ -1,0 +1,12 @@
+<%= javascript_include_tag 'home' %>
+<div class="row">
+  <div class="col-lg-6">
+  	<%= label_tag :near_by, "NEAR BY:" %>
+		<%= text_field_tag :near_by, nil, id: "near_by"%>
+  </div><!-- /.col-lg-6 -->
+</div>
+
+<div class="marker-tip">Move marker to specify exact location.</div>
+<div>
+	<div id="map_canvas" style="height:440px; width:80%; display:inline-block;"></div>
+</div>
