@@ -3,7 +3,7 @@ class CreateTrucks < ActiveRecord::Migration
     create_table :trucks do |t|
     	t.integer :locationid
     	t.string :applicant
-    	t.integer :facility_type  #enum
+    	t.string :facility_type 
     	t.integer :cnn, limit: 6
     	t.text :location_description
     	t.text :address
@@ -11,7 +11,7 @@ class CreateTrucks < ActiveRecord::Migration
     	t.integer :block
     	t.integer :lot
     	t.string :permit
-    	t.integer :status #enum
+    	t.string :status 
     	t.text :food_items
     	t.float :X
     	t.float :Y
@@ -20,11 +20,11 @@ class CreateTrucks < ActiveRecord::Migration
     	t.string :schedule
     	t.string :days_hours
     	t.string :noi_sent
-    	t.datetime :approved
-    	t.datetime :received
+    	t.string :approved
+    	t.string :received
     	t.integer :prior_permit
-    	t.datetime :expiration_time
-    	# t.st_point :location, geographic: true
+    	t.string :expiration_time
+    	t.spatial  "location", limit: {:srid=>4326, :type=>"point"}
       t.timestamps
     end
   end

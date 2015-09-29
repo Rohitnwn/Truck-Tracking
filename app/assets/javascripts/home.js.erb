@@ -54,41 +54,31 @@ var Tracking = {
 	setVehicleMarkers: function(trucks, dest_lat, dest_lng) {
 		Tracking.deleteMarkers();
     var image = "<%= asset_path('truck.png') %>";
-    var count = 0;
 
     for (var i in trucks) {
-	    if (trucks[i].latitude != "" && trucks[i].longitude != "" && trucks[i].latitude != "0" && trucks[i].longitude != "0") {
-    		var sourceLatLng = new google.maps.LatLng(dest_lat, dest_lng);
-	      var truckLatLng = new google.maps.LatLng(trucks[i].latitude, trucks[i].longitude);
-    		var result = google.maps.geometry.spherical.computeDistanceBetween(sourceLatLng, truckLatLng);
-    		// distance between first and second location is less than 5km
-				if (result < 5000) {
-    			console.log(result);
-	        var marker;
-	        var status_type = '';
+      var truckLatLng = new google.maps.LatLng(trucks[i].latitude, trucks[i].longitude);
+  		// distance between first and second location is less than 5km
+      var marker;
 
-	        marker = new google.maps.Marker({
-	          position: truckLatLng,
-	          map: map,
-	          icon: image,
-	        });
-	        
-	        count++;
-	        var htmlForMarker = "";
-	        
-	        htmlForMarker = htmlForMarker + "<div style='width:160px;min-height:15px;'>";
-	        htmlForMarker = htmlForMarker + "Applicant : ";
-	        htmlForMarker = htmlForMarker + trucks[i]["applicant"] + "<br/>";
-	        htmlForMarker = htmlForMarker + "Facility Type : ";
-	        htmlForMarker = htmlForMarker + trucks[i]["facility_type"] + "<br/>";
-	        htmlForMarker = htmlForMarker + "Status : ";
-	        htmlForMarker = htmlForMarker + trucks[i]["status"] + "<br/>";
-	        htmlForMarker = htmlForMarker + "Food Items : ";
-	        htmlForMarker = htmlForMarker + trucks[i]["food_items"] + "<br/>";
-	        htmlForMarker = htmlForMarker + " Days Hours: "+ trucks[i]["days_hours"] + '<br/>';
-	        Tracking.attachInstructionText(marker, htmlForMarker, trucks[i]['id']);
-	      }
-    	}
+      marker = new google.maps.Marker({
+        position: truckLatLng,
+        map: map,
+        icon: image,
+      });
+      
+      var htmlForMarker = "";
+      
+      htmlForMarker = htmlForMarker + "<div style='width:160px;min-height:15px;'>";
+      htmlForMarker = htmlForMarker + "Applicant : ";
+      htmlForMarker = htmlForMarker + trucks[i]["applicant"] + "<br/>";
+      htmlForMarker = htmlForMarker + "Facility Type : ";
+      htmlForMarker = htmlForMarker + trucks[i]["facility_type"] + "<br/>";
+      htmlForMarker = htmlForMarker + "Status : ";
+      htmlForMarker = htmlForMarker + trucks[i]["status"] + "<br/>";
+      htmlForMarker = htmlForMarker + "Food Items : ";
+      htmlForMarker = htmlForMarker + trucks[i]["food_items"] + "<br/>";
+      htmlForMarker = htmlForMarker + " Days Hours: "+ trucks[i]["days_hours"] + '<br/>';
+      Tracking.attachInstructionText(marker, htmlForMarker);
     }// for loop
   },
 
@@ -96,7 +86,6 @@ var Tracking = {
   deleteMarkers: function() {
   	for (var i in Tracking.markers) {
       Tracking.markers[i].setMap(null);
-      delete Tracking.markers[i];
     }
     Tracking.markers = [];
   },  
@@ -113,47 +102,23 @@ var Tracking = {
         Tracking.trucks = data;
       },
       complete: function () {
-        Tracking.setVehicleMarkers(Tracking.trucks, dest_lat, dest_lng);
+        Tracking.setVehicleMarkers(Tracking.trucks);
       }
   	});
 	},
 
-	marker_clicked: {},
 
-	attachInstructionText: function(marker, text, id) {
-			Tracking.markers.push(marker);
-	    infowindow = new google.maps.InfoWindow({
-	        content: text,
-	        maxWidth: 300
-	    });
-	    Tracking.marker_clicked[id] = false;
+	attachInstructionText: function(marker, text) {
+		Tracking.markers.push(marker);
+    infowindow = new google.maps.InfoWindow({
+      content: text,
+      maxWidth: 300
+    });
 
-	    google.maps.event.addListener(infowindow, 'closeclick', function () {
-	      Tracking.marker_clicked[id] = false;
-	    });
-
-	    google.maps.event.addListener(marker, 'mouseover', function () {
-	        // Open an info window when the marker is clicked on,
-	        // containing the text of the step.
-	        infowindow.setContent(text);
-	        infowindow.open(map, marker);
-	    });
-
-	    google.maps.event.addListener(marker, 'mouseout', function () {
-	        // Open an info window when the marker is clicked on,
-	        // containing the text of the step.
-	        if (!Tracking.marker_clicked[id]) {
-	        	infowindow.close(map, marker);
-	      	}
-	    });
-
-	    google.maps.event.addListener(marker, 'click', function () {
-	        // Open an info window when the marker is clicked on,
-	        // containing the text of the step.
-	        Tracking.marker_clicked[id] = true;
-	        infowindow.setContent(text);
-	        infowindow.open(map, marker);
-	    });
+    google.maps.event.addListener(marker, 'click', function () {
+      infowindow.setContent(text);
+      infowindow.open(map, marker);
+    });
 	}
 
 }	
