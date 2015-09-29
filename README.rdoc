@@ -18,4 +18,4 @@ You can also enter location in search bar on the top to  find the nearest trucks
 
 The app shows 5 nearest trucks which are inside the 5km radius only. If there are less than 5 trucks, it will show only those. 
 
-<tt>rake doc:app</tt>.
+
